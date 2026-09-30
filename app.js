@@ -67,3 +67,114 @@ document.querySelectorAll(".decision-buttons button").forEach(b=>b.onclick=()=>{
 });
 $("themeBars").innerHTML=themes.map(t=>'<div class="theme-row"><strong>'+t[0]+'</strong><div class="bar"><i style="width:'+Math.min(100,t[1]*12)+'%"></i></div><span>'+t[1]+'</span></div>').join("");
 render();
+
+
+const refs={
+ consumerDuty:"https://www.fca.org.uk/firms/consumer-duty",
+ conc:"https://handbook.fca.org.uk/handbook/CONC/7/",
+ vuln:"https://www.fca.org.uk/publications/finalised-guidance/guidance-firms-fair-treatment-vulnerable-customers",
+ prin:"https://handbook.fca.org.uk/handbook/PRIN/2A/"
+};
+
+document.querySelectorAll(".tab").forEach(tab=>tab.onclick=()=>{
+ document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+ document.querySelectorAll(".view").forEach(v=>v.classList.remove("active-view"));
+ tab.classList.add("active");
+ $(tab.dataset.view).classList.add("active-view");
+});
+
+function containsAny(text, terms){return terms.some(t=>text.includes(t))}
+function addFlag(flags,severity,title,detail,url){flags.push([severity,title,detail,url])}
+
+$("loadDemoCase").onclick=()=>{
+ $("inputCircumstances").value="Customer lost their job six weeks ago and is now receiving Universal Credit. They have missed three payments and say they are struggling with food and energy costs.";
+ $("inputNotes").value="Customer became upset during the call. They said they are overwhelmed by repeated phone calls and asked to be contacted by email only.";
+ $("inputVulnerability").value="Recent bereavement and signs of financial difficulty. Customer says they are struggling to cope.";
+ $("inputActions").value="Agent agreed a six-month payment plan of £120 per month and kept the standard outbound call strategy in place.";
+ $("inputRationale").value="The customer accepted the payment plan and it is lower than the normal monthly payment, so I believe we treated the customer fairly.";
+};
+
+$("runFreeformReview").onclick=()=>{
+ const circumstances=$("inputCircumstances").value.trim();
+ const notes=$("inputNotes").value.trim();
+ const vulnerability=$("inputVulnerability").value.trim();
+ const actions=$("inputActions").value.trim();
+ const rationale=$("inputRationale").value.trim();
+
+ if(!circumstances && !notes && !vulnerability && !actions && !rationale){
+   $("freeformEmpty").innerHTML="<strong>Add some fictional case information first</strong><span>The demo needs case evidence or an agent rationale to review.</span>";
+   return;
+ }
+
+ const all=(circumstances+" "+notes+" "+vulnerability+" "+actions+" "+rationale).toLowerCase();
+ const evidence=(circumstances+" "+notes+" "+vulnerability+" "+actions).toLowerCase();
+ const rat=rationale.toLowerCase();
+ const flags=[];
+
+ const affordabilityEvidence=containsAny(all,["income and expenditure","i&e","disposable income","afford","essential expenditure","budget","income","expenditure"]);
+ const arrangement=containsAny(all,["payment plan","arrangement","repayment","monthly payment","per month"]);
+ if(arrangement && !affordabilityEvidence){
+   addFlag(flags,"high","Affordability evidence may be missing","A repayment arrangement is recorded, but the information entered does not clearly show how sustainable affordability was assessed for this customer.",refs.conc);
+ }
+
+ const vulnTerms=["bereavement","mental health","depression","anxiety","disability","illness","cancer","dementia","vulnerab","struggling to cope","suicid","language","hearing","learning difficulty"];
+ const hasVuln=containsAny(evidence,vulnTerms);
+ const vulnAddressed=containsAny(rat,["vulnerab","support","bereav","communication","adjustment","signpost","extra help"]);
+ if(hasVuln && !vulnAddressed){
+   addFlag(flags,"high","Recorded vulnerability is not reflected in the rationale","The case evidence includes a potential support need, but the final rationale does not explain how that information affected the treatment or outcome.",refs.vuln);
+ }
+
+ const asksWritten=containsAny(evidence,["email only","written communication","do not call","stop calling","contact by email","letter only"]);
+ const continuedCalls=containsAny(actions.toLowerCase(),["call strategy","outbound call","phone call","continued calls","telephone"]);
+ if(asksWritten && continuedCalls){
+   addFlag(flags,"high","Communication preference may not have been followed","The customer appears to have requested a different contact method while the recorded action suggests telephone contact continued. This should be checked by a human reviewer.",refs.vuln);
+ }
+
+ const weakAgreement=containsAny(rat,["customer accepted","customer agreed","they agreed","accepted the plan"]);
+ const goodOutcomeReasoning=containsAny(rat,["affordable","circumstances","sustainable","support need","foreseeable harm","good outcome","appropriate because","evidence"]);
+ if(weakAgreement && !goodOutcomeReasoning){
+   addFlag(flags,"medium","Customer agreement is being used as the main fairness test","Agreement to an arrangement does not by itself demonstrate that the customer received an appropriate outcome. The rationale should link the decision to the customer's circumstances and evidence.",refs.consumerDuty);
+ }
+
+ const processLed=containsAny(rat,["standard process","standard contact","policy followed","correctly applied","procedure followed","terms and conditions"]);
+ const customerSpecific=containsAny(rat,["because the customer","their circumstances","customer's circumstances","specific need","individual"]);
+ if(processLed && !customerSpecific){
+   addFlag(flags,"medium","Rationale appears process-led rather than outcome-led","Following a standard process is not the same as evidencing a good customer outcome. The reviewer should explain why the treatment was appropriate for this individual customer.",refs.prin);
+ }
+
+ const hardship=containsAny(evidence,["food","energy","rent","mortgage","essential bills","universal credit","lost job","unemployed","financial difficulty","struggling"]);
+ const supportAction=containsAny(actions.toLowerCase(),["breathing space","signpost","debt advice","forbearance","freeze","reduced payment","payment holiday","support"]);
+ if(hardship && !supportAction){
+   addFlag(flags,"medium","Wider financial-difficulty support is not clearly evidenced","The evidence suggests financial pressure, but the actions entered do not clearly show whether appropriate support options or signposting were considered.",refs.conc);
+ }
+
+ if(rationale.length<90){
+   addFlag(flags,"medium","Final rationale may be too brief","The rationale is short and may not sufficiently evidence the key facts, judgement and customer-outcome reasoning needed for robust assurance.",refs.consumerDuty);
+ }
+
+ if(flags.length===0){
+   addFlag(flags,"pass","No obvious rule-based exception identified","Based only on the fictional text entered, the demo did not identify an obvious assurance gap. A human reviewer should still validate the evidence and final judgement.",refs.consumerDuty);
+ }
+
+ const highCount=flags.filter(f=>f[0]==="high").length;
+ const materialCount=flags.filter(f=>f[0]!=="pass").length;
+ const outcome=highCount>=2?"Escalate":materialCount>0?"Further Work":"Pass";
+
+ $("freeformEmpty").classList.add("hidden");
+ $("freeformResults").classList.remove("hidden");
+ $("freeformOutcome").textContent=outcome;
+ $("freeformFlagCount").textContent=materialCount+" flag"+(materialCount===1?"":"s");
+ $("freeformSummary").textContent=outcome==="Pass"
+   ?"No obvious exception was detected by the demonstration rules. Human QA should still confirm that the evidence supports the conclusion."
+   :outcome==="Escalate"
+   ?"Multiple potentially material gaps were detected. The case should be reviewed against the underlying evidence before a final customer-outcome conclusion is reached."
+   :"The rationale may need strengthening before the case can be passed. The assurance checks below show where the entered evidence and final reasoning may not fully align.";
+ $("freeformFindings").innerHTML=flags.map(f=>'<div class="finding '+f[0]+'"><strong>'+f[1]+'</strong><p>'+f[2]+'</p><a href="'+f[3]+'" target="_blank" rel="noreferrer">Open public FCA reference →</a></div>').join("");
+ document.querySelectorAll(".freeform-decisions button").forEach(b=>b.classList.remove("selected"));
+};
+
+document.querySelectorAll(".freeform-decisions button").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll(".freeform-decisions button").forEach(x=>x.classList.remove("selected"));
+ b.classList.add("selected");
+ $("freeformDecisionNote").textContent="Human reviewer selected: "+b.dataset.freeformDecision+". In a real control framework this would be stored with rationale, reviewer ID and audit history.";
+});
