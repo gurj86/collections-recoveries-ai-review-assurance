@@ -17,6 +17,12 @@
   </header>
 
   <main>
+    <nav class="tabs" aria-label="Toolkit views">
+      <button class="tab active" data-view="dashboardView">Dashboard</button>
+      <button class="tab" data-view="aiCaseReviewView">AI Case Review</button>
+    </nav>
+
+    <section id="dashboardView" class="view active-view">
     <section class="hero-grid">
       <div class="card metric"><span>Cases reviewed</span><strong id="casesReviewed">12</strong><small>fictional sample</small></div>
       <div class="card metric"><span>Potential issues</span><strong id="issuesFound">7</strong><small>AI assurance flags</small></div>
@@ -126,6 +132,71 @@
           <span>Supporting customers with characteristics of vulnerability.</span>
         </a>
       </div>
+    </section>
+
+    </section>
+
+    <section id="aiCaseReviewView" class="view">
+      <section class="card ai-case-review">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">FICTIONAL AGENT WORKFLOW</p>
+            <h2>AI Case Review</h2>
+          </div>
+          <span class="badge-light">Demo logic • human review required</span>
+        </div>
+        <p class="intro-copy">Enter a fictional collections case as if an agent had completed the review. The assurance layer will challenge the rationale against the evidence entered below and surface potential Consumer Duty, vulnerability and CONC issues.</p>
+
+        <div class="form-grid">
+          <label>Customer circumstances
+            <textarea id="inputCircumstances" placeholder="e.g. Customer lost their job 6 weeks ago and is now receiving Universal Credit."></textarea>
+          </label>
+          <label>Call / interaction notes
+            <textarea id="inputNotes" placeholder="e.g. Customer became upset on the call and asked for contact by email only."></textarea>
+          </label>
+          <label>Vulnerability / support needs
+            <textarea id="inputVulnerability" placeholder="e.g. Bereavement, mental health, language need, illness, no issue identified."></textarea>
+          </label>
+          <label>Actions taken
+            <textarea id="inputActions" placeholder="e.g. 6-month payment plan agreed at £120 per month."></textarea>
+          </label>
+          <label class="full">Agent final rationale
+            <textarea id="inputRationale" class="rationale-input" placeholder="Explain why you believe the customer was treated fairly and received an appropriate outcome."></textarea>
+          </label>
+        </div>
+
+        <div class="demo-actions">
+          <button id="loadDemoCase" class="secondary">Load fictional example</button>
+          <button id="runFreeformReview">Run AI Review</button>
+        </div>
+
+        <div id="freeformEmpty" class="empty-state">
+          <strong>No review run yet</strong>
+          <span>Complete the fictional case fields, then select Run AI Review.</span>
+        </div>
+
+        <div id="freeformResults" class="freeform-results hidden">
+          <div class="review-score">
+            <div>
+              <p class="eyebrow">AI ASSURANCE RESULT</p>
+              <h3 id="freeformOutcome">Further Work</h3>
+            </div>
+            <div id="freeformFlagCount" class="score-bubble">0 flags</div>
+          </div>
+          <div id="freeformSummary" class="text-panel ai"></div>
+          <div id="freeformFindings" class="findings"></div>
+          <div class="decision-panel">
+            <p class="eyebrow">HUMAN DECISION</p>
+            <h3>Final reviewer judgement</h3>
+            <div class="decision-buttons freeform-decisions">
+              <button data-freeform-decision="Pass">Pass</button>
+              <button data-freeform-decision="Further Work">Further Work</button>
+              <button data-freeform-decision="Escalate">Escalate</button>
+            </div>
+            <p id="freeformDecisionNote">The AI does not make the final regulatory or customer-outcome decision.</p>
+          </div>
+        </div>
+      </section>
     </section>
 
     <footer>
