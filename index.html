@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Collections & Recoveries AI Review Assurance Toolkit</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">FICTIONAL PORTFOLIO DEMO</p>
+      <h1>Collections & Recoveries AI Review Assurance Toolkit</h1>
+      <p class="sub">AI-assisted quality assurance for Consumer Duty, vulnerability and collections case reviews.</p>
+    </div>
+    <div class="badge">Human decision required</div>
+  </header>
+
+  <main>
+    <section class="hero-grid">
+      <div class="card metric"><span>Cases reviewed</span><strong id="casesReviewed">12</strong><small>fictional sample</small></div>
+      <div class="card metric"><span>Potential issues</span><strong id="issuesFound">7</strong><small>AI assurance flags</small></div>
+      <div class="card metric"><span>Cases requiring work</span><strong id="needsWork">4</strong><small>human review outcome</small></div>
+      <div class="card metric"><span>Pass rate</span><strong id="passRate">67%</strong><small>after QA review</small></div>
+    </section>
+
+    <section class="layout">
+      <aside class="card case-list">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">CASE QUEUE</p>
+            <h2>Sample reviews</h2>
+          </div>
+          <select id="filter">
+            <option value="all">All</option>
+            <option value="Pass">Pass</option>
+            <option value="Further Work">Further Work</option>
+            <option value="Escalate">Escalate</option>
+          </select>
+        </div>
+        <div id="caseButtons"></div>
+      </aside>
+
+      <section class="card workspace">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">ASSURANCE WORKSPACE</p>
+            <h2 id="caseTitle"></h2>
+          </div>
+          <span id="caseOutcome" class="status"></span>
+        </div>
+
+        <div class="customer-grid">
+          <div><span>Customer</span><strong id="customer"></strong></div>
+          <div><span>Product</span><strong id="product"></strong></div>
+          <div><span>Arrears</span><strong id="arrears"></strong></div>
+          <div><span>Support need</span><strong id="supportNeed"></strong></div>
+        </div>
+
+        <div class="review-grid">
+          <article>
+            <p class="eyebrow">AGENT RATIONALE</p>
+            <div id="rationale" class="text-panel"></div>
+          </article>
+          <article>
+            <p class="eyebrow">AI ASSURANCE SUMMARY</p>
+            <div id="aiSummary" class="text-panel ai"></div>
+          </article>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">EVIDENCE & CHALLENGE</p>
+            <h3>Potential review gaps</h3>
+          </div>
+          <button id="runReview">Run AI assurance check</button>
+        </div>
+
+        <div id="findings" class="findings"></div>
+
+        <div class="decision-panel">
+          <div>
+            <p class="eyebrow">HUMAN REVIEW</p>
+            <h3>Reviewer decision</h3>
+          </div>
+          <div class="decision-buttons">
+            <button data-decision="Pass">Pass</button>
+            <button data-decision="Further Work">Further Work</button>
+            <button data-decision="Escalate">Escalate</button>
+          </div>
+          <p id="decisionNote">AI output is advisory. A human reviewer remains accountable for the final outcome.</p>
+        </div>
+      </section>
+    </section>
+
+    <section class="card themes">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">MANAGEMENT INFORMATION</p>
+          <h2>Recurring assurance themes</h2>
+        </div>
+      </div>
+      <div id="themeBars"></div>
+    </section>
+
+    <section class="card refs">
+      <p class="eyebrow">PUBLIC REGULATORY REFERENCES</p>
+      <h2>What the demo is checking against</h2>
+      <div class="ref-grid">
+        <a href="https://www.fca.org.uk/firms/consumer-duty" target="_blank" rel="noreferrer">
+          <strong>Consumer Duty</strong>
+          <span>Act to deliver good outcomes for retail customers.</span>
+        </a>
+        <a href="https://handbook.fca.org.uk/handbook/PRIN/2A/" target="_blank" rel="noreferrer">
+          <strong>PRIN 2A</strong>
+          <span>Cross-cutting rules and retail customer outcomes.</span>
+        </a>
+        <a href="https://handbook.fca.org.uk/handbook/CONC/7/" target="_blank" rel="noreferrer">
+          <strong>CONC 7</strong>
+          <span>Arrears, default and recovery considerations.</span>
+        </a>
+        <a href="https://www.fca.org.uk/publications/finalised-guidance/guidance-firms-fair-treatment-vulnerable-customers" target="_blank" rel="noreferrer">
+          <strong>Vulnerability guidance</strong>
+          <span>Supporting customers with characteristics of vulnerability.</span>
+        </a>
+      </div>
+    </section>
+
+    <footer>
+      Personal portfolio project • fictional data only • not compliance or legal advice
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
