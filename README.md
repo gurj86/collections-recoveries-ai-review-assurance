@@ -18,7 +18,9 @@ It is designed to demonstrate:
 
 ## Live demo
 
-Once GitHub Pages is enabled for this repository, the interactive dashboard can be viewed directly in a browser.
+**[Open the live Collections & Recoveries AI Review Assurance Dashboard](https://gurj86.github.io/collections-recoveries-ai-review-assurance/)**
+
+The live site includes the sample case-review dashboard and the AI Case Review workflow.
 
 ## Example workflow
 
